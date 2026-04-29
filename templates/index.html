@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuildSmart — Conception Architecturale Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & ROOT ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#040d24;
+  --navy2:#07122f;
+  --navy3:#0d1e4a;
+  --blue:#1e40af;
+  --blue2:#2563eb;
+  --blue3:#3b82f6;
+  --blue4:#60a5fa;
+  --cyan:#06b6d4;
+  --sky:#38bdf8;
+  --gold:#f59e0b;
+  --amber:#fbbf24;
+  --green:#10b981;
+  --red:#ef4444;
+  --white:#fff;
+  --muted:#8fa3bf;
+  --border:rgba(59,130,246,0.14);
+  --border2:rgba(59,130,246,0.28);
+  --card:rgba(10,20,58,0.55);
+  --card2:rgba(7,18,47,0.7);
+  --radius:14px;
+  --shadow:0 24px 48px rgba(0,0,0,0.35);
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+input,button,select,textarea{font-family:inherit;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--navy2);}::-webkit-scrollbar-thumb{background:rgba(59,130,246,0.35);border-radius:3px;}
+
+/* ── SCREEN SYSTEM ── */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+#screen-client.active,#screen-styles.active,#screen-chat.active,#screen-payment.active,#screen-engineer.active{display:flex;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:250px;min-height:100vh;background:var(--navy2);border-right:1px solid var(--border);padding:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sb-logo{padding:22px 24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sb-logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--blue2),var(--cyan));border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-text{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;background:linear-gradient(90deg,var(--blue4),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sb-logo-text b{-webkit-text-fill-color:var(--gold);}
+.sb-nav{flex:1;padding:12px 0 0;overflow-y:auto;}
+.sb-section{padding:12px 20px 4px;font-size:10px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:11px;padding:10px 20px;color:var(--muted);cursor:pointer;font-size:13.5px;border-left:3px solid transparent;transition:all .2s;margin-bottom:1px;}
+.sb-item:hover{color:var(--blue4);background:rgba(37,99,235,.06);}
+.sb-item.active{color:var(--white);background:rgba(37,99,235,.12);border-left-color:var(--blue3);}
+.sb-item .icon{width:18px;text-align:center;opacity:.8;}
+.sb-badge{margin-left:auto;background:var(--blue2);border-radius:99px;padding:2px 8px;font-size:10px;font-weight:700;color:#fff;}
+.sb-user{margin:12px;border-radius:12px;background:rgba(37,99,235,.1);border:1px solid var(--border);padding:14px;display:flex;align-items:center;gap:11px;}
+.sb-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;overflow:hidden;}
+.sb-avatar img{width:100%;height:100%;object-fit:cover;}
+.sb-uname{font-size:13px;font-weight:600;line-height:1.2;}
+.sb-urole{font-size:11px;color:var(--muted);}
+.sb-status{width:7px;height:7px;border-radius:50%;background:var(--green);margin-left:auto;flex-shrink:0;}
+
+/* ── MAIN LAYOUT ── */
+.main{margin-left:250px;flex:1;padding:36px 44px;min-height:100vh;max-width:calc(100vw - 250px);}
+
+/* ── NAV BAR (landing) ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 56px;background:rgba(4,13,36,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:21px;display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-text{background:linear-gradient(90deg,var(--blue4),var(--sky));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-logo-text b{-webkit-text-fill-color:var(--gold);}
+nav ul{display:flex;gap:36px;list-style:none;}
+nav ul li a{color:rgba(148,163,184,.8);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s;}
+nav ul li a:hover{color:var(--sky);}
+.nav-cta{background:var(--blue2);color:#fff !important;padding:9px 22px;border-radius:8px;font-weight:600 !important;transition:background .2s !important;}
+.nav-cta:hover{background:var(--blue3) !important;}
+
+/* ── TOP BAR (for screens with nav) ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.page-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;}
+.page-sub{color:var(--muted);font-size:13.5px;margin-top:3px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:9px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-primary{background:var(--blue2);color:#fff;box-shadow:0 0 24px rgba(37,99,235,.35);}
+.btn-primary:hover{background:var(--blue3);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--blue4);border:1px solid var(--border2);}
+.btn-outline:hover{background:rgba(37,99,235,.1);border-color:var(--blue3);}
+.btn-sm{padding:7px 15px;font-size:12.5px;border-radius:7px;}
+.btn-ghost{background:rgba(37,99,235,.12);color:var(--blue4);border:1px solid var(--border);}
+.btn-ghost:hover{background:rgba(37,99,235,.22);}
+.btn-danger{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.25);}
+.btn-success{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25);}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:30px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.stat-accent{position:absolute;top:0;right:0;width:55px;height:55px;border-radius:0 var(--radius) 0 80%;opacity:.18;}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:10px;font-weight:500;letter-spacing:.2px;}
+.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;margin-bottom:6px;line-height:1;}
+.stat-foot{font-size:12px;color:var(--green);}
+
+/* ── PROJECT CARDS ── */
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:32px;}
+.proj-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:all .25s;cursor:pointer;}
+.proj-card:hover{transform:translateY(-5px);border-color:var(--border2);box-shadow:var(--shadow);}
+.proj-img{height:175px;position:relative;overflow:hidden;}
+.proj-img img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.proj-card:hover .proj-img img{transform:scale(1.06);}
+.proj-img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(4,13,36,.8) 0%,transparent 60%);}
+.proj-img-badge{position:absolute;top:12px;left:12px;background:rgba(4,13,36,.75);backdrop-filter:blur(8px);border:1px solid var(--border2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--blue4);}
+.proj-img-style{position:absolute;bottom:14px;left:14px;font-size:12px;font-weight:600;color:#fff;}
+.proj-body{padding:16px;}
+.proj-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;margin-bottom:4px;}
+.proj-meta{font-size:12px;color:var(--muted);margin-bottom:13px;display:flex;gap:10px;flex-wrap:wrap;}
+.proj-meta span{display:flex;align-items:center;gap:4px;}
+.prog-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;}
+.prog-bar{height:4px;background:rgba(59,130,246,.12);border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue2),var(--cyan));}
+.proj-footer{display:flex;align-items:center;justify-content:space-between;}
+.proj-status{padding:4px 11px;border-radius:99px;font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:5px;}
+.st-en_cours{background:rgba(37,99,235,.18);color:var(--blue4);}
+.st-en_revision{background:rgba(245,158,11,.18);color:var(--gold);}
+.st-cloture{background:rgba(16,185,129,.18);color:var(--green);}
+.st-en_attente{background:rgba(148,163,184,.12);color:var(--muted);}
+.proj-eng{display:flex;align-items:center;gap:6px;}
+.proj-eng-av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.proj-eng-name{font-size:12px;color:var(--muted);}
+
+/* ── CONCEPTIONS GALLERY ── */
+.gallery-header{background:linear-gradient(135deg,rgba(13,22,74,.8),rgba(37,99,235,.12));border:1px solid var(--border);border-radius:20px;padding:32px 36px;margin-bottom:28px;position:relative;overflow:hidden;}
+.gallery-header::before{content:'';position:absolute;right:-80px;top:-80px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.18),transparent);}
+.gallery-h2{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;margin-bottom:6px;}
+.gallery-sub{color:var(--muted);font-size:14px;}
+.filter-row{display:flex;gap:8px;margin-bottom:26px;flex-wrap:wrap;}
+.chip{padding:8px 18px;border-radius:99px;background:rgba(10,20,58,.7);border:1px solid var(--border);color:var(--muted);font-size:13px;cursor:pointer;transition:all .2s;}
+.chip.active,.chip:hover{background:var(--blue2);border-color:var(--blue2);color:#fff;}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.style-card{border-radius:18px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .3s;background:rgba(13,21,71,.4);}
+.style-card:hover{transform:translateY(-6px);border-color:var(--border2);box-shadow:0 28px 56px rgba(0,0,0,.45);}
+.style-img{height:215px;position:relative;overflow:hidden;}
+.style-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s;}
+.style-card:hover .style-img img{transform:scale(1.08);}
+.style-img-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(4,13,36,.85) 0%,transparent 55%);}
+.style-badge-img{position:absolute;top:12px;right:12px;background:rgba(37,99,235,.85);backdrop-filter:blur(8px);border-radius:6px;padding:4px 11px;font-size:11px;color:#fff;font-weight:600;}
+.style-emoji-overlay{position:absolute;bottom:14px;left:14px;font-size:28px;}
+.style-info{padding:18px;}
+.style-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:5px;}
+.style-desc{font-size:12.5px;color:var(--muted);line-height:1.55;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.style-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+.style-tag{background:rgba(37,99,235,.12);border:1px solid var(--border);border-radius:99px;padding:3px 9px;font-size:10.5px;color:var(--blue4);}
+.style-footer{display:flex;align-items:center;justify-content:space-between;}
+.style-price{font-size:15px;font-weight:700;color:var(--sky);}
+.style-meta2{font-size:11px;color:var(--muted);}
+.style-eng-mini{display:flex;align-items:center;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.style-eng-av{width:26px;height:26px;border-radius:50%;object-fit:cover;border:2px solid var(--border2);}
+.style-eng-info{font-size:11px;color:var(--muted);}
+.style-eng-name{font-size:12px;font-weight:600;color:var(--white);}
+
+/* ── ENGINEER CARDS (big) ── */
+.eng-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:28px;}
+.eng-big-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:all .25s;}
+.eng-big-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:var(--shadow);}
+.eng-banner{height:90px;position:relative;overflow:hidden;}
+.eng-banner img{width:100%;height:100%;object-fit:cover;}
+.eng-banner-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(30,64,175,.6),rgba(6,182,212,.3));}
+.eng-card-body{padding:16px;}
+.eng-av-wrap{display:flex;align-items:flex-end;justify-content:space-between;margin-top:-42px;margin-bottom:12px;}
+.eng-av-big{width:68px;height:68px;border-radius:50%;border:3px solid var(--navy2);overflow:hidden;flex-shrink:0;}
+.eng-av-big img{width:100%;height:100%;object-fit:cover;}
+.eng-avail{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;}
+.eng-avail.yes{color:var(--green);}
+.eng-avail.no{color:var(--muted);}
+.eng-avail::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;}
+.eng-full-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px;}
+.eng-speciality{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.eng-stats-row{display:flex;gap:16px;margin-bottom:12px;}
+.eng-stat{text-align:center;}
+.eng-stat-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;line-height:1;}
+.eng-stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.eng-sep{width:1px;background:var(--border);align-self:stretch;}
+.eng-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;}
+.eng-tag{background:rgba(37,99,235,.1);border:1px solid var(--border);border-radius:99px;padding:3px 9px;font-size:10.5px;color:var(--blue4);}
+.eng-tarif{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.eng-tarif b{color:var(--white);font-size:15px;}
+
+/* ── CHAT ── */
+.chat-layout{margin-left:250px;flex:1;display:flex;height:100vh;overflow:hidden;}
+.chat-list{width:290px;border-right:1px solid var(--border);background:rgba(7,18,47,.5);display:flex;flex-direction:column;}
+.chat-list-head{padding:22px 20px 16px;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;border-bottom:1px solid var(--border);}
+.chat-search-box{margin:12px 16px;background:rgba(10,20,58,.6);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:#fff;font-size:13px;outline:none;width:calc(100% - 32px);}
+.chat-item{padding:13px 18px;display:flex;gap:11px;align-items:center;cursor:pointer;transition:background .2s;border-left:3px solid transparent;}
+.chat-item:hover{background:rgba(37,99,235,.07);}
+.chat-item.active{background:rgba(37,99,235,.14);border-left-color:var(--blue3);}
+.chat-av{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;overflow:hidden;}
+.chat-av img{width:100%;height:100%;object-fit:cover;}
+.chat-cname{font-size:14px;font-weight:500;margin-bottom:2px;}
+.chat-prev{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.chat-tm{font-size:10.5px;color:var(--muted);}
+.chat-unread{background:var(--blue2);border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;}
+.chat-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.chat-header{padding:18px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:13px;background:rgba(7,18,47,.5);flex-shrink:0;}
+.chat-partner-info .cname{font-weight:600;font-size:15px;}
+.chat-partner-info .crole{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;}
+.chat-partner-info .crole::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);}
+.chat-hactions{margin-left:auto;display:flex;gap:10px;}
+.chat-hbtn{width:36px;height:36px;border-radius:8px;background:rgba(37,99,235,.12);border:1px solid var(--border);color:var(--blue4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all .2s;}
+.chat-hbtn:hover{background:rgba(37,99,235,.28);}
+.chat-msgs{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px;}
+.msg{display:flex;gap:10px;max-width:72%;}
+.msg.sent{margin-left:auto;flex-direction:row-reverse;}
+.msg-av{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--blue2),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;overflow:hidden;}
+.msg-av img{width:100%;height:100%;object-fit:cover;}
+.msg-bubble{background:rgba(10,22,64,.85);border:1px solid var(--border);border-radius:16px;border-top-left-radius:4px;padding:12px 16px;font-size:13.5px;line-height:1.55;}
+.msg.sent .msg-bubble{background:rgba(37,99,235,.3);border-color:rgba(37,99,235,.4);border-top-right-radius:4px;border-top-left-radius:16px;}
+.msg-time{font-size:10px;color:var(--muted);margin-top:4px;}
+.chat-input-area{padding:18px 26px;border-top:1px solid var(--border);background:rgba(7,18,47,.5);flex-shrink:0;}
+.chat-input-row{display:flex;align-items:center;gap:10px;background:rgba(10,22,64,.7);border:1px solid var(--border);border-radius:12px;padding:11px 15px;}
+.chat-input-field{flex:1;background:none;border:none;color:#fff;font-size:14px;outline:none;}
+.chat-input-field::placeholder{color:rgba(148,163,184,.45);}
+.send-btn{width:34px;height:34px;border-radius:8px;background:var(--blue2);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .2s;flex-shrink:0;}
+.send-btn:hover{background:var(--blue3);}
+
+/* ── PAYMENT ── */
+.payment-layout{margin-left:250px;flex:1;padding:40px 44px;display:flex;gap:32px;align-items:flex-start;min-height:100vh;}
+.payment-main{flex:1;}
+.payment-side{width:360px;flex-shrink:0;}
+.pay-steps{display:flex;margin-bottom:32px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.step{flex:1;padding:15px 12px;display:flex;align-items:center;gap:10px;background:rgba(10,22,64,.4);border-right:1px solid var(--border);font-size:13px;color:var(--muted);}
+.step:last-child{border-right:none;}
+.step.active{background:rgba(37,99,235,.16);color:#fff;}
+.step.done{background:rgba(16,185,129,.08);color:var(--green);}
+.step-num{width:26px;height:26px;border-radius:50%;background:rgba(59,130,246,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.step.active .step-num{background:var(--blue2);}
+.step.done .step-num{background:var(--green);}
+.pay-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px;margin-bottom:18px;}
+.pay-card h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.card-visual{background:linear-gradient(135deg,#1e3a8a,#0284c7);border-radius:14px;padding:22px;margin-bottom:18px;position:relative;overflow:hidden;}
+.card-visual::before{content:'';position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.07);}
+.card-visual::after{content:'';position:absolute;left:-20px;bottom:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.04);}
+.card-chip{font-size:26px;margin-bottom:20px;}
+.card-num{font-family:'Syne',sans-serif;font-size:18px;letter-spacing:4px;margin-bottom:16px;position:relative;}
+.card-foot{display:flex;gap:24px;position:relative;}
+.card-fl label{font-size:9px;opacity:.6;letter-spacing:1px;text-transform:uppercase;}
+.card-fl p{font-size:13px;font-weight:500;}
+.escrow-box{background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.18);border-radius:12px;padding:16px;display:flex;gap:12px;margin-bottom:18px;}
+.escrow-icon{font-size:22px;}
+.escrow-box h4{font-size:13.5px;font-weight:600;color:var(--sky);margin-bottom:4px;}
+.escrow-box p{font-size:12px;color:var(--muted);line-height:1.5;}
+.order-sum{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;position:sticky;top:32px;}
+.order-sum h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;margin-bottom:18px;}
+.sum-proj{background:rgba(37,99,235,.1);border-radius:12px;padding:14px;margin-bottom:18px;display:flex;gap:12px;align-items:center;}
+.sum-img{width:50px;height:50px;border-radius:9px;background:linear-gradient(135deg,var(--blue2),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;}
+.sum-img img{width:100%;height:100%;object-fit:cover;}
+.sum-info h4{font-size:14px;font-weight:600;margin-bottom:3px;}
+.sum-info p{font-size:12px;color:var(--muted);}
+.price-row{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid rgba(59,130,246,.06);}
+.price-row span:first-child{color:var(--muted);}
+.price-total{display:flex;justify-content:space-between;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-top:12px;padding-top:14px;border-top:1px solid var(--border);margin-bottom:18px;}
+.price-total span:last-child{color:var(--sky);}
+.security-box{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18);border-radius:10px;padding:14px;font-size:12px;color:var(--green);line-height:1.7;}
+
+/* ── ENGINEER DASHBOARD TABLE ── */
+.eng-layout{margin-left:250px;flex:1;padding:36px 44px;min-height:100vh;}
+.req-table{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:24px;}
+.table-head{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 110px;gap:14px;padding:13px 20px;background:rgba(7,18,47,.6);border-bottom:1px solid var(--border);font-size:10.5px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;font-weight:600;}
+.table-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr 1fr 110px;gap:14px;padding:15px 20px;border-bottom:1px solid rgba(59,130,246,.05);font-size:13px;align-items:center;transition:background .2s;cursor:pointer;}
+.table-row:last-child{border:none;}
+.table-row:hover{background:rgba(37,99,235,.05);}
+.cl-info{display:flex;gap:10px;align-items:center;}
+.cl-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue2),#7c3aed);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.cl-name{font-weight:500;font-size:13px;}
+.cl-sub{font-size:11px;color:var(--muted);}
+
+/* ── FORM ELEMENTS ── */
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:11.5px;color:var(--blue4);letter-spacing:.5px;margin-bottom:8px;font-weight:600;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;background:rgba(7,18,47,.7);border:1px solid var(--border);border-radius:9px;color:#fff;font-size:14px;outline:none;transition:border-color .2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--blue3);}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(148,163,184,.4);}
+.form-group select option{background:#0d1e4a;color:#fff;}
+.form-group textarea{resize:vertical;min-height:90px;line-height:1.5;}
+
+/* ── LANDING ── */
+#screen-landing{background:var(--navy);position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 65% 30%,rgba(37,99,235,.22) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 10% 80%,rgba(6,182,212,.1) 0%,transparent 50%);}
+.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.055) 1px,transparent 1px);background-size:58px 58px;}
+.hero-wrap{position:relative;z-index:2;display:grid;grid-template-columns:1fr 430px;gap:72px;align-items:center;min-height:100vh;padding:120px 80px 80px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.6)}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(37,99,235,.14);border:1px solid rgba(37,99,235,.3);border-radius:99px;padding:6px 16px;font-size:11.5px;color:var(--blue4);letter-spacing:.8px;text-transform:uppercase;margin-bottom:26px;animation:fadeUp .6s ease both;}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--sky);border-radius:50%;animation:pulse 2s infinite;}
+.hero-title{font-family:'Syne',sans-serif;font-size:64px;font-weight:800;line-height:1.02;letter-spacing:-2px;margin-bottom:22px;animation:fadeUp .7s .1s ease both;}
+.hero-title .hl{background:linear-gradient(90deg,var(--blue4),var(--sky),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{color:var(--muted);font-size:16.5px;line-height:1.7;max-width:480px;margin-bottom:38px;animation:fadeUp .7s .2s ease both;}
+.hero-btns{display:flex;gap:14px;animation:fadeUp .7s .3s ease both;}
+.hero-btns .btn-primary{padding:14px 32px;font-size:15px;}
+.hero-btns .btn-outline{padding:14px 28px;font-size:15px;}
+.hero-stats{display:flex;gap:40px;margin-top:52px;animation:fadeUp .7s .4s ease both;}
+.h-stat-num{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;}
+.h-stat-lbl{font-size:12.5px;color:var(--muted);margin-top:1px;}
+
+/* LOGIN CARD */
+.login-card{background:rgba(10,22,64,.72);backdrop-filter:blur(22px);border:1px solid var(--border2);border-radius:22px;padding:40px;animation:fadeUp .7s .2s ease both;}
+.login-card h3{font-family:'Syne',sans-serif;font-size:23px;font-weight:700;margin-bottom:7px;}
+.login-card .sub{color:var(--muted);font-size:13.5px;margin-bottom:28px;}
+.role-tabs{display:flex;gap:8px;margin-bottom:22px;}
+.role-tab{flex:1;padding:10px;border-radius:9px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;}
+.role-tab.active{background:var(--blue2);border-color:var(--blue2);color:#fff;}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue2),var(--cyan));border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;transition:opacity .2s,transform .2s;}
+.btn-login:hover{opacity:.9;transform:translateY(-1px);}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--muted);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.err-box{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.25);color:#fca5a5;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;}
+.err-box.show{display:block;}
+.demo-btns{display:flex;gap:8px;}
+.demo-btn{flex:1;padding:10px;border-radius:8px;background:transparent;color:var(--blue4);border:1px solid var(--border2);cursor:pointer;font-size:13px;font-weight:500;transition:all .2s;}
+.demo-btn:hover{background:rgba(37,99,235,.12);}
+
+/* ── MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(4,13,36,.75);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-backdrop.open{display:flex;}
+.modal{background:var(--navy2);border:1px solid var(--border2);border-radius:22px;padding:36px;width:620px;max-width:90vw;max-height:90vh;overflow-y:auto;animation:fadeUp .3s ease;}
+.modal-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px;}
+.modal-sub{color:var(--muted);font-size:13.5px;margin-bottom:28px;}
+.modal-close{position:absolute;top:22px;right:22px;width:32px;height:32px;border-radius:8px;background:rgba(37,99,235,.1);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;}
+.modal-close:hover{background:rgba(239,68,68,.15);color:var(--red);}
+.modal-inner{position:relative;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.modal-steps{display:flex;gap:0;margin-bottom:28px;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.modal-step{flex:1;padding:12px 14px;text-align:center;font-size:12px;font-weight:600;background:rgba(10,20,58,.6);color:var(--muted);border-right:1px solid var(--border);transition:all .2s;cursor:pointer;}
+.modal-step:last-child{border-right:none;}
+.modal-step.active{background:rgba(37,99,235,.18);color:#fff;}
+.modal-step.done{background:rgba(16,185,129,.1);color:var(--green);}
+
+/* ── NOTIFS & MISC ── */
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--red);position:absolute;top:8px;right:8px;}
+.tag-pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:600;}
+.screen-switcher{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:150;display:none;gap:6px;background:rgba(10,22,64,.92);backdrop-filter:blur(20px);border:1px solid var(--border2);border-radius:99px;padding:7px 14px;}
+.screen-switcher.show{display:flex;}
+.sw-btn{background:none;border:none;color:var(--blue4);padding:7px 15px;border-radius:99px;cursor:pointer;font-size:12.5px;font-weight:600;transition:all .2s;white-space:nowrap;}
+.sw-btn.active{background:var(--blue2);color:#fff;}
+.sw-btn:hover:not(.active){background:rgba(37,99,235,.2);color:#fff;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:90px;right:28px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:14px 20px;font-size:14px;color:var(--green);backdrop-filter:blur(12px);z-index:300;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── PROJECT DETAIL ── */
+.detail-grid{display:grid;grid-template-columns:1fr 340px;gap:28px;}
+.detail-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.detail-card h4{font-family:'Syne',sans-serif;font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.info-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid rgba(59,130,246,.06);}
+.info-row:last-child{border:none;}
+.info-row span:first-child{color:var(--muted);}
+.info-row span:last-child{font-weight:500;}
+
+/* ── HERO VISUAL ── */
+.hero-visual{position:relative;height:420px;border-radius:22px;overflow:hidden;border:1px solid var(--border2);}
+.hero-visual img{width:100%;height:100%;object-fit:cover;}
+.hero-visual-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(30,64,175,.4),rgba(6,182,212,.15));}
+.hero-visual-card{position:absolute;bottom:20px;left:20px;right:20px;background:rgba(7,18,47,.8);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:16px;}
+.hv-stat{text-align:center;}
+.hv-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;}
+.hv-lbl{font-size:10.5px;color:var(--muted);}
+.hv-sep{width:1px;background:var(--border);align-self:stretch;}
+</style>
+</head>
+<body>
+
+<!-- ── SCREEN SWITCHER (shows after login) ── -->
+<div class="screen-switcher" id="screenSwitcher">
+  <button class="sw-btn" onclick="showScreen('client')">⊞ Dashboard</button>
+  <button class="sw-btn" onclick="showScreen('styles')">🏛 Styles</button>
+  <button class="sw-btn" onclick="showScreen('chat')">💬 Messages</button>
+  <button class="sw-btn" onclick="showScreen('payment')">💳 Paiement</button>
+  <button class="sw-btn" id="engSwitchBtn" style="display:none" onclick="showScreen('engineer')">🛠 Ingénieur</button>
+  <button class="sw-btn" style="color:#f87171" onclick="doLogout()">⏻</button>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════ MODAL: ADD PROJECT ═══════════ -->
+<div class="modal-backdrop" id="modalAddProj">
+  <div class="modal modal-inner">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Nouveau projet 🏗️</div>
+    <div class="modal-sub">Décrivez votre projet architectural et trouvez l'ingénieur idéal</div>
+    <div class="modal-steps" id="modalSteps">
+      <div class="modal-step active" data-step="1">① Projet</div>
+      <div class="modal-step" data-step="2">② Style</div>
+      <div class="modal-step" data-step="3">③ Budget</div>
+    </div>
+
+    <!-- Step 1: Project Info -->
+    <div id="modalStep1">
+      <div class="form-group"><label>TITRE DU PROJET *</label><input id="pTitle" placeholder="Ex: Villa moderne La Marsa — 280m²"></div>
+      <div class="grid2">
+        <div class="form-group"><label>VILLE *</label>
+          <select id="pVille">
+            <option value="">Choisir...</option>
+            <option>Tunis</option><option>Sfax</option><option>Sousse</option><option>La Marsa</option>
+            <option>Nabeul</option><option>Hammamet</option><option>Monastir</option><option>Bizerte</option>
+          </select>
+        </div>
+        <div class="form-group"><label>SUPERFICIE (m²) *</label><input id="pSuper" type="number" placeholder="Ex: 250"></div>
+      </div>
+      <div class="form-group"><label>ADRESSE</label><input id="pAddr" placeholder="Rue des Oliviers, Lot 14"></div>
+      <div class="form-group"><label>DESCRIPTION / VISION</label><textarea id="pDesc" placeholder="Décrivez votre vision, vos envies, contraintes particulières..."></textarea></div>
+      <div class="grid2">
+        <div class="form-group"><label>TYPE DE CONSTRUCTION</label>
+          <select id="pType">
+            <option>Villa individuelle</option><option>Appartement</option><option>Maison jumelée</option>
+            <option>Bureau / Commerce</option><option>Rénovation complète</option>
+          </select>
+        </div>
+        <div class="form-group"><label>PRIORITÉ</label>
+          <select id="pPrio">
+            <option value="normale">Normale</option>
+            <option value="haute">Haute</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+        <button class="btn btn-primary" onclick="modalNext(2)">Suivant → Style</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Style Selection -->
+    <div id="modalStep2" style="display:none">
+      <div class="form-group"><label>STYLE ARCHITECTURAL *</label>
+        <select id="pStyle">
+          <option value="">Choisir un style...</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;" id="stylePickGrid"></div>
+      <div class="grid2">
+        <div class="form-group"><label>NOMBRE DE CHAMBRES</label>
+          <select id="pCh"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5+</option></select>
+        </div>
+        <div class="form-group"><label>NOMBRE D'ÉTAGES</label>
+          <select id="pEt"><option>RDC seul</option><option selected>R+1</option><option>R+2</option><option>R+3</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>INGÉNIEUR SOUHAITÉ (optionnel)</label>
+        <select id="pEng"><option value="">Attribuer automatiquement</option></select>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+        <button class="btn btn-outline" onclick="modalNext(1)">← Retour</button>
+        <button class="btn btn-primary" onclick="modalNext(3)">Suivant → Budget</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Budget & Submit -->
+    <div id="modalStep3" style="display:none">
+      <div class="grid2">
+        <div class="form-group"><label>BUDGET ESTIMÉ (DT)</label><input id="pBudget" type="number" placeholder="Ex: 1200"></div>
+        <div class="form-group"><label>DATE SOUHAITÉE</label><input id="pDate" type="date"></div>
+      </div>
+      <div class="form-group"><label>OPTIONS SUPPLÉMENTAIRES</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;" id="optGrid">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="opt3d"> Plan 3D (+150 DT)</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="optPisc"> Piscine incluse</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="optJar"> Aménagement jardin</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="optDomo"> Domotique</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" id="optEco"> Certification BBC/Éco</label>
+        </div>
+      </div>
+      <div class="form-group"><label>NOTES SPÉCIALES POUR L'INGÉNIEUR</label><textarea id="pNotes" placeholder="Ex: Maximiser la lumière naturelle, orientation sud préférée..."></textarea></div>
+
+      <div style="background:rgba(37,99,235,.08);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:13px;color:var(--muted);">Budget total estimé avec options</div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--sky)" id="budgetTotal">– DT</div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="modalNext(2)">← Retour</button>
+        <button class="btn btn-primary" onclick="submitProject()">🚀 Soumettre le projet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 1 : LANDING / LOGIN
+══════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <nav>
+    <a class="nav-logo" href="#">
+      <svg width="32" height="32" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="9" fill="url(#nlg1)"/><polygon points="18,6 30,14 30,28 18,30 6,28 6,14" fill="none" stroke="white" stroke-width="1.5" opacity="0.3"/><polygon points="18,10 27,16 27,26 18,28 9,26 9,16" fill="url(#nlg2)" opacity="0.6"/><rect x="14" y="17" width="8" height="9" rx="1" fill="white"/><rect x="16" y="13" width="4" height="5" rx="0.5" fill="white" opacity="0.8"/><defs><linearGradient id="nlg1" x1="0" y1="0" x2="36" y2="36"><stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#0891b2"/></linearGradient><linearGradient id="nlg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs></svg>
+      <span class="nav-logo-text">Build<b>Smart</b></span>
+    </a>
+    <ul>
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#">Styles</a></li>
+      <li><a href="#">Comment ça marche</a></li>
+      <li><a href="#">Nos ingénieurs</a></li>
+    </ul>
+    <a href="#" class="nav-cta" onclick="return false;">Se connecter</a>
+  </nav>
+  <div class="hero-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="hero-wrap">
+    <div>
+      <div class="hero-badge">🏆 Plateforme N°1 en Tunisie</div>
+      <h1 class="hero-title">Votre vision<br><span class="hl">architecturale</span><br>réalisée.</h1>
+      <p class="hero-sub">Connectez-vous avec les meilleurs ingénieurs en conception architecturale. Collaborez en temps réel, recevez vos plans via Escrow sécurisé.</p>
+      <div class="hero-btns">
+        <button class="btn btn-primary" onclick="fillDemo('client');doLogin()">Découvrir la plateforme →</button>
+        <button class="btn btn-outline" onclick="">Voir la démo ▶</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="h-stat-num">2.4K+</div><div class="h-stat-lbl">Projets réalisés</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div><div class="h-stat-num">180+</div><div class="h-stat-lbl">Ingénieurs experts</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div><div class="h-stat-num">98%</div><div class="h-stat-lbl">Satisfaction client</div></div>
+      </div>
+    </div>
+
+    <!-- LOGIN / REGISTER CARD -->
+    <div class="login-card">
+      <!-- LOGIN PANEL -->
+      <div id="panelLogin">
+        <h3>Bienvenue 👋</h3>
+        <p class="sub">Connectez-vous pour accéder à votre espace</p>
+        <div class="role-tabs">
+          <button class="role-tab active" id="tabClient" onclick="selectTab('client')">👤 Client</button>
+          <button class="role-tab" id="tabIng" onclick="selectTab('ingenieur')">🛠️ Ingénieur</button>
+        </div>
+        <div class="err-box" id="loginError">Email ou mot de passe incorrect.</div>
+        <div class="form-group"><label>ADRESSE EMAIL</label><input type="email" id="loginEmail" placeholder="votre@email.com"></div>
+        <div class="form-group">
+          <label>MOT DE PASSE</label>
+          <input type="password" id="loginPwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="btn-login" onclick="doLogin()">Se connecter →</button>
+        <div class="divider">comptes démo</div>
+        <div class="demo-btns">
+          <button class="demo-btn" onclick="fillDemo('client')">👤 client / 1234</button>
+          <button class="demo-btn" onclick="fillDemo('ingenieur')">🛠️ ing / 1234</button>
+        </div>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">
+          Pas encore de compte ?
+          <a href="#" style="color:var(--blue4);font-weight:600" onclick="toggleAuthPanel('register');return false;">Créer un compte →</a>
+        </p>
+      </div>
+
+      <!-- REGISTER PANEL -->
+      <div id="panelRegister" style="display:none">
+        <h3>Créer un compte 🚀</h3>
+        <p class="sub">Rejoignez BuildSmart gratuitement</p>
+        <div class="role-tabs">
+          <button class="role-tab active" id="regTabClient" onclick="selectRegTab('client')">👤 Client</button>
+          <button class="role-tab" id="regTabIng" onclick="selectRegTab('ingenieur')">🛠️ Ingénieur</button>
+        </div>
+        <div class="err-box" id="registerError">Erreur lors de l'inscription.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group"><label>PRÉNOM *</label><input id="regPrenom" placeholder="Aziz"></div>
+          <div class="form-group"><label>NOM *</label><input id="regNom" placeholder="Mansour"></div>
+        </div>
+        <div class="form-group"><label>EMAIL *</label><input type="email" id="regEmail" placeholder="votre@email.com"></div>
+        <div class="form-group"><label>TÉLÉPHONE</label><input id="regTel" placeholder="+216 XX XXX XXX"></div>
+        <div class="form-group"><label>MOT DE PASSE *</label><input type="password" id="regPwd" placeholder="Minimum 4 caractères"></div>
+        <div class="form-group"><label>VILLE</label>
+          <select id="regVille" style="background:rgba(10,20,58,.7);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:#fff;font-size:13.5px;width:100%;outline:none;">
+            <option value="">Choisir...</option>
+            <option>Tunis</option><option>Sfax</option><option>Sousse</option><option>La Marsa</option>
+            <option>Nabeul</option><option>Hammamet</option><option>Monastir</option><option>Bizerte</option>
+          </select>
+        </div>
+        <button class="btn-login" onclick="doRegister()">Créer mon compte →</button>
+        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">
+          Déjà un compte ?
+          <a href="#" style="color:var(--blue4);font-weight:600" onclick="toggleAuthPanel('login');return false;">Se connecter →</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 2 : CLIENT DASHBOARD
+══════════════════════════════════ -->
+<div id="screen-client" class="screen">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,2 16,6 16,14 9,16 2,14 2,6" fill="none" stroke="white" stroke-width="1.5"/><rect x="7" y="8" width="4" height="5" rx=".5" fill="white"/></svg></div>
+      <span class="sb-logo-text">Build<b>Smart</b></span>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">Principal</div>
+      <div class="sb-item active" onclick="showScreen('client')"><span class="icon">⊞</span> Dashboard</div>
+      <div class="sb-item" onclick="showScreen('styles')"><span class="icon">🏛</span> Styles architecturaux</div>
+      <div class="sb-section">Mes projets</div>
+      <div class="sb-item" onclick="showScreen('client')"><span class="icon">📋</span> Mes demandes</div>
+      <div class="sb-item" onclick="showScreen('chat')"><span class="icon">📐</span> Plans reçus</div>
+      <div class="sb-section">Communication</div>
+      <div class="sb-item" onclick="showScreen('chat')"><span class="icon">💬</span> Messages<span class="sb-badge" id="msgBadge" style="display:none">2</span></div>
+      <div class="sb-section">Finances</div>
+      <div class="sb-item" onclick="showScreen('payment')"><span class="icon">💳</span> Paiements</div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-avatar" id="cAvatar">AM</div>
+      <div><div class="sb-uname" id="cName">Aziz Mansour</div><div class="sb-urole">Client Premium</div></div>
+      <div class="sb-status"></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="cGreet">Bonjour 👋</div>
+        <div class="page-sub">Voici l'état de vos projets architecturaux</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm">🔔</button>
+        <button class="btn btn-primary" onclick="openModal()">+ Nouveau projet</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="cStats">
+      <div class="stat-card"><div class="stat-accent" style="background:var(--blue3)"></div><div class="stat-label">Projets actifs</div><div class="stat-val" id="stActif">–</div><div class="stat-foot">↑ En conception</div></div>
+      <div class="stat-card"><div class="stat-accent" style="background:var(--sky)"></div><div class="stat-label">En révision</div><div class="stat-val" id="stRev">–</div><div class="stat-foot" style="color:var(--gold)">En attente</div></div>
+      <div class="stat-card"><div class="stat-accent" style="background:var(--gold)"></div><div class="stat-label">Budget total</div><div class="stat-val" id="stBudget">–</div><div class="stat-foot" style="color:var(--gold)">🔒 Escrow</div></div>
+      <div class="stat-card"><div class="stat-accent" style="background:var(--green)"></div><div class="stat-label">Projets livrés</div><div class="stat-val" id="stDone">–</div><div class="stat-foot">✓ Tous livrés</div></div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">Mes projets en cours</div>
+      <span style="font-size:13px;color:var(--blue4);cursor:pointer">Voir tous →</span>
+    </div>
+    <div class="proj-grid" id="cProjets"></div>
+
+    <!-- ARCHITECTS SECTION -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;margin-top:8px;">
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;">Nos ingénieurs experts</div>
+      <span style="font-size:13px;color:var(--blue4);cursor:pointer" onclick="showScreen('styles')">Explorer les conceptions →</span>
+    </div>
+    <div class="eng-cards-grid" id="cEngineers"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 3 : STYLES / CONCEPTIONS
+══════════════════════════════════ -->
+<div id="screen-styles" class="screen">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,2 16,6 16,14 9,16 2,14 2,6" fill="none" stroke="white" stroke-width="1.5"/><rect x="7" y="8" width="4" height="5" rx=".5" fill="white"/></svg></div><span class="sb-logo-text">Build<b>Smart</b></span></div>
+    <div class="sb-nav">
+      <div class="sb-item" onclick="showScreen('client')"><span class="icon">⊞</span> Dashboard</div>
+      <div class="sb-item active"><span class="icon">🏛</span> Styles architecturaux</div>
+      <div class="sb-item" onclick="showScreen('chat')"><span class="icon">💬</span> Messages</div>
+      <div class="sb-item" onclick="showScreen('payment')"><span class="icon">💳</span> Paiements</div>
+    </div>
+    <div class="sb-user"><div class="sb-avatar" id="sAvatar">AM</div><div><div class="sb-uname" id="sName">–</div><div class="sb-urole">Client</div></div><div class="sb-status"></div></div>
+  </div>
+  <div class="main">
+    <div class="gallery-header">
+      <div class="gallery-h2">Choisissez votre style 🏛️</div>
+      <div class="gallery-sub">Explorez notre catalogue de conceptions architecturales. Cliquez sur "Choisir" pour lancer votre projet.</div>
+    </div>
+    <div class="filter-row" id="filterRow">
+      <div class="chip active" onclick="filterStyles(this,'tous')">Tous les styles</div>
+      <div class="chip" onclick="filterStyles(this,'Moderne')">🏙 Moderne</div>
+      <div class="chip" onclick="filterStyles(this,'Minimaliste')">◻ Minimaliste</div>
+      <div class="chip" onclick="filterStyles(this,'Contemporain')">✦ Contemporain</div>
+      <div class="chip" onclick="filterStyles(this,'Méditerranéen')">🌊 Méditerranéen</div>
+      <div class="chip" onclick="filterStyles(this,'Art Déco')">✦ Art Déco</div>
+      <div class="chip" onclick="filterStyles(this,'Industriel')">⚙ Industriel</div>
+      <div class="chip" onclick="filterStyles(this,'Bioclimatique')">🌿 Bioclimatique</div>
+    </div>
+    <div class="gallery-grid" id="stylesGrid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 4 : CHAT (DM System)
+══════════════════════════════════ -->
+<div id="screen-chat" class="screen">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,2 16,6 16,14 9,16 2,14 2,6" fill="none" stroke="white" stroke-width="1.5"/><rect x="7" y="8" width="4" height="5" rx=".5" fill="white"/></svg></div><span class="sb-logo-text">Build<b>Smart</b></span></div>
+    <div class="sb-nav">
+      <div class="sb-item" onclick="showScreen('client')"><span class="icon">⊞</span> Dashboard</div>
+      <div class="sb-item" onclick="showScreen('styles')"><span class="icon">🏛</span> Styles</div>
+      <div class="sb-item active"><span class="icon">💬</span> Messages</div>
+      <div class="sb-item" onclick="showScreen('payment')"><span class="icon">💳</span> Paiements</div>
+    </div>
+    <div class="sb-user"><div class="sb-avatar" id="chAvatar">AM</div><div><div class="sb-uname" id="chName">–</div><div class="sb-urole">Client</div></div><div class="sb-status"></div></div>
+  </div>
+  <div class="chat-layout">
+
+    <!-- LEFT: conversations + user search -->
+    <div class="chat-list">
+      <div class="chat-list-head" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Messages</span>
+        <button onclick="toggleUserSearch()" style="background:rgba(37,99,235,.2);border:1px solid var(--border2);border-radius:7px;color:var(--blue4);padding:5px 11px;font-size:12px;cursor:pointer;font-weight:600">+ Nouveau</button>
+      </div>
+
+      <!-- User search panel (hidden by default) -->
+      <div id="userSearchPanel" style="display:none;padding:10px 12px;border-bottom:1px solid var(--border);">
+        <input id="userSearchInput" class="chat-search-box" placeholder="🔍 Rechercher un utilisateur..." style="margin:0;width:100%"
+          oninput="searchUsers(this.value)">
+        <div id="userSearchResults" style="margin-top:8px;max-height:200px;overflow-y:auto;"></div>
+      </div>
+
+      <input class="chat-search-box" placeholder="🔍  Filtrer conversations..." oninput="filterConvos(this.value)">
+      <div id="chatThreads" style="flex:1;overflow-y:auto;"></div>
+    </div>
+
+    <!-- RIGHT: chat window -->
+    <div class="chat-main">
+      <!-- Empty state -->
+      <div id="chatEmpty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);gap:14px;">
+        <div style="font-size:52px">💬</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white)">Vos messages</div>
+        <div style="font-size:13px;text-align:center;max-width:260px;">Sélectionnez une conversation ou cliquez sur <b style="color:var(--blue4)">+ Nouveau</b> pour écrire à quelqu'un.</div>
+      </div>
+
+      <!-- Chat window (hidden until conversation selected) -->
+      <div id="chatWindow" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="chat-header">
+          <div class="chat-av" style="background:linear-gradient(135deg,#2563eb,#06b6d4);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px" id="chatHeaderAv">?</div>
+          <div class="chat-partner-info">
+            <div class="cname" id="chatHeaderName">–</div>
+            <div class="crole" id="chatHeaderStatus">–</div>
+          </div>
+          <div class="chat-hactions">
+            <div class="chat-hbtn">📞</div>
+            <div class="chat-hbtn">⋯</div>
+          </div>
+        </div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div id="typingIndicator" style="display:none;padding:4px 28px;font-size:12px;color:var(--muted);font-style:italic;">en train d'écrire...</div>
+        <div class="chat-input-area">
+          <div class="chat-input-row">
+            <input class="chat-input-field" id="chatInput" placeholder="Écrivez votre message..." onkeydown="if(event.key==='Enter')sendMsg()" oninput="sendTyping()">
+            <button class="send-btn" onclick="sendMsg()">➤</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 5 : PAYMENT
+══════════════════════════════════ -->
+<div id="screen-payment" class="screen">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,2 16,6 16,14 9,16 2,14 2,6" fill="none" stroke="white" stroke-width="1.5"/><rect x="7" y="8" width="4" height="5" rx=".5" fill="white"/></svg></div><span class="sb-logo-text">Build<b>Smart</b></span></div>
+    <div class="sb-nav">
+      <div class="sb-item" onclick="showScreen('client')"><span class="icon">⊞</span> Dashboard</div>
+      <div class="sb-item" onclick="showScreen('styles')"><span class="icon">🏛</span> Styles</div>
+      <div class="sb-item" onclick="showScreen('chat')"><span class="icon">💬</span> Messages</div>
+      <div class="sb-item active"><span class="icon">💳</span> Paiements</div>
+    </div>
+    <div class="sb-user"><div class="sb-avatar" id="pAvatar">AM</div><div><div class="sb-uname" id="pName">–</div><div class="sb-urole">Client</div></div><div class="sb-status"></div></div>
+  </div>
+  <div class="payment-layout">
+    <div class="payment-main">
+      <div class="topbar" style="margin-bottom:24px;">
+        <div><div class="page-title">Paiement sécurisé 💳</div><div class="page-sub">Système Escrow — fonds protégés jusqu'à livraison</div></div>
+      </div>
+      <div class="pay-steps">
+        <div class="step done"><div class="step-num">✓</div><span>Projet soumis</span></div>
+        <div class="step done"><div class="step-num">✓</div><span>Plan approuvé</span></div>
+        <div class="step active"><div class="step-num">3</div><span>Paiement</span></div>
+        <div class="step"><div class="step-num">4</div><span>Plan final</span></div>
+      </div>
+      <div class="escrow-box">
+        <div class="escrow-icon">🔒</div>
+        <div>
+          <h4>Paiement Escrow sécurisé</h4>
+          <p>Vos fonds sont bloqués jusqu'à réception et approbation du plan final. L'ingénieur est payé seulement après votre confirmation.</p>
+        </div>
+      </div>
+      <div class="pay-card">
+        <h3>Votre carte bancaire</h3>
+        <div class="card-visual">
+          <div class="card-chip">💳</div>
+          <div class="card-num">4242  ••••  ••••  3847</div>
+          <div class="card-foot">
+            <div class="card-fl"><label>Titulaire</label><p id="cardHolder">–</p></div>
+            <div class="card-fl"><label>Expiration</label><p>09/27</p></div>
+            <div class="card-fl"><label>CVV</label><p>•••</p></div>
+          </div>
+        </div>
+        <div class="form-group"><label>NUMÉRO DE CARTE</label><input placeholder="1234 5678 9012 3456" maxlength="19"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group"><label>DATE D'EXPIRATION</label><input placeholder="MM/AA" maxlength="5"></div>
+          <div class="form-group"><label>CVV</label><input placeholder="•••" maxlength="4" type="password"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:16px;font-size:16px;justify-content:center;border-radius:12px;" onclick="doPayment()">
+        🔒 Confirmer le paiement Escrow — <span id="payAmt">1 200 DT</span>
+      </button>
+    </div>
+    <div class="payment-side">
+      <div class="order-sum">
+        <h3>Récapitulatif de commande</h3>
+        <div class="sum-proj">
+          <div class="sum-img" id="sumEmoji">🏠</div>
+          <div class="sum-info"><h4 id="sumTitle">–</h4><p id="sumMeta">–</p></div>
+        </div>
+        <div class="price-row"><span>Conception de base</span><span id="priceBase">–</span></div>
+        <div class="price-row"><span>Révisions incluses (×3)</span><span>200 DT</span></div>
+        <div class="price-row"><span>Plan 3D</span><span>150 DT</span></div>
+        <div class="price-row"><span>Réduction fidélité</span><span style="color:var(--green)">- 50 DT</span></div>
+        <div class="price-total"><span>Total Escrow</span><span id="priceTotal">1 200 DT</span></div>
+        <div class="security-box">
+          ✅ Paiement 100% sécurisé via SSL<br>
+          🔒 Fonds bloqués jusqu'à livraison<br>
+          ↩️ Remboursement garanti si non livré<br>
+          📋 Contrat signé électroniquement
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCREEN 6 : ENGINEER DASHBOARD
+══════════════════════════════════ -->
+<div id="screen-engineer" class="screen">
+  <div class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-mark"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><polygon points="9,2 16,6 16,14 9,16 2,14 2,6" fill="none" stroke="white" stroke-width="1.5"/><rect x="7" y="8" width="4" height="5" rx=".5" fill="white"/></svg></div><span class="sb-logo-text">Build<b>Smart</b></span></div>
+    <div class="sb-nav">
+      <div class="sb-section">Espace Ingénieur</div>
+      <div class="sb-item active"><span class="icon">⊞</span> Dashboard</div>
+      <div class="sb-item" onclick="showScreen('chat')"><span class="icon">💬</span> Messages</div>
+      <div class="sb-item" onclick="showScreen('styles')"><span class="icon">📐</span> Mes conceptions</div>
+    </div>
+    <div class="sb-user"><div class="sb-avatar" style="background:linear-gradient(135deg,#7c3aed,#2563eb)" id="eAvatar">SB</div><div><div class="sb-uname" id="eName">–</div><div class="sb-urole">Ingénieur Expert</div></div><div class="sb-status"></div></div>
+  </div>
+  <div class="eng-layout">
+    <div class="topbar">
+      <div><div class="page-title">Dashboard Ingénieur 🛠️</div><div class="page-sub">Gérez vos demandes, conceptions et revenus</div></div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);border-radius:9px;padding:9px 18px;font-size:13px;color:var(--green);font-weight:600">✓ Disponible</div>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen('styles')">+ Nouvelle conception</button>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-accent" style="background:var(--sky)"></div><div class="stat-label">Nouvelles demandes</div><div class="stat-val" style="color:var(--sky)" id="eNewDem">5</div><div class="stat-foot" style="color:var(--muted)">En attente</div></div>
+      <div class="stat-card"><div class="stat-accent" style="background:var(--blue3)"></div><div class="stat-label">En conception</div><div class="stat-val" id="eActive">–</div><div class="stat-foot">↑ Actifs</div></div>
+      <div class="stat-card"><div class="stat-accent" style="background:var(--gold)"></div><div class="stat-label">Revenus du mois</div><div class="stat-val">3 400 <span style="font-size:14px;color:var(--muted);font-family:'DM Sans',sans-serif">DT</span></div><div class="stat-foot">↑ +18% vs dernier mois</div></div>
+      <div class="stat-card"><div class="stat-accent" style="background:var(--gold)"></div><div class="stat-label">Note moyenne</div><div class="stat-val">⭐ 4.9</div><div class="stat-foot" style="color:var(--gold)">Sur 47 avis</div></div>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;">Demandes récentes</div>
+    <div class="req-table">
+      <div class="table-head"><div>Client</div><div>Projet</div><div>Budget</div><div>Date</div><div>Statut</div><div>Action</div></div>
+      <div id="engTableBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+// ═══════════════════ STATE ═══════════════════
+let currentUser = null;
+let currentProjectId = null;
+let allConceptions = [];
+let currentModalStep = 1;
+let allEngineers = [];
+let socket = null;
+let currentChatProjectId = null;
+let selectedRegRole = 'client';
+
+// ═══════════════════ UNSPLASH IMAGES ═══════════════════
+const ARCH_IMAGES = {
+  'Moderne':       'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
+  'Minimaliste':   'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=600&q=80',
+  'Contemporain':  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80',
+  'Méditerranéen': 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80',
+  'Art Déco':      'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=600&q=80',
+  'Industriel':    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80',
+  'Bioclimatique': 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&q=80',
+  'Néo-Classique': 'https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&q=80',
+};
+const PROJ_IMAGES = [
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=700&q=80',
+  'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=700&q=80',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=700&q=80',
+  'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=700&q=80',
+  'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=700&q=80',
+  'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=700&q=80',
+];
+const ENG_BANNERS = [
+  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=70',
+  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400&q=70',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=70',
+];
+const AVATAR_COLORS = ['linear-gradient(135deg,#1e40af,#06b6d4)','linear-gradient(135deg,#7c3aed,#2563eb)','linear-gradient(135deg,#0f766e,#2563eb)'];
+
+// ═══════════════════ SCREEN NAVIGATION ═══════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    const n = s.id.replace('screen-','');
+    if(['client','styles','chat','payment','engineer'].includes(n)) s.style.display='';
+  });
+  document.querySelectorAll('.sw-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('screen-'+name);
+  if(!el) return;
+  el.classList.add('active');
+  if(['client','styles','chat','payment','engineer'].includes(name)) el.style.display='flex';
+  document.querySelectorAll('.sw-btn').forEach(b => { if(b.textContent.toLowerCase().includes(name.slice(0,4))) b.classList.add('active'); });
+  if(name==='styles') loadConceptions();
+  if(name==='chat') loadMsgs();
+  if(name==='client') loadClientDash();
+  if(name==='engineer') loadEngDash();
+}
+
+// ═══════════════════ TOAST ═══════════════════
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? 'rgba(239,68,68,.12)' : 'rgba(16,185,129,.12)';
+  t.style.borderColor = isError ? 'rgba(239,68,68,.3)' : 'rgba(16,185,129,.3)';
+  t.style.color = isError ? '#fca5a5' : 'var(--green)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ═══════════════════ AUTH ═══════════════════
+function selectTab(role) {
+  document.getElementById('tabClient').classList.toggle('active', role==='client');
+  document.getElementById('tabIng').classList.toggle('active', role==='ingenieur');
+}
+
+function selectRegTab(role) {
+  selectedRegRole = role;
+  document.getElementById('regTabClient').classList.toggle('active', role==='client');
+  document.getElementById('regTabIng').classList.toggle('active', role==='ingenieur');
+}
+
+function toggleAuthPanel(panel) {
+  document.getElementById('panelLogin').style.display    = panel==='login'    ? '' : 'none';
+  document.getElementById('panelRegister').style.display = panel==='register' ? '' : 'none';
+  document.getElementById('loginError').classList.remove('show');
+  document.getElementById('registerError').classList.remove('show');
+}
+
+function fillDemo(role) {
+  selectTab(role);
+  document.getElementById('loginEmail').value = role==='client' ? 'client@demo.com' : 'ing@demo.com';
+  document.getElementById('loginPwd').value = '1234';
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pwd   = document.getElementById('loginPwd').value;
+  const errEl = document.getElementById('loginError');
+  errEl.classList.remove('show');
+  try {
+    const res  = await fetch('/api/auth/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, mot_de_passe: pwd})});
+    const data = await res.json();
+    if(!res.ok) { errEl.textContent = data.error || 'Identifiants incorrects'; errEl.classList.add('show'); return; }
+    currentUser = data.user;
+    afterLogin();
+  } catch(e) { errEl.classList.add('show'); }
+}
+
+async function doRegister() {
+  const prenom = document.getElementById('regPrenom').value.trim();
+  const nom    = document.getElementById('regNom').value.trim();
+  const email  = document.getElementById('regEmail').value.trim();
+  const pwd    = document.getElementById('regPwd').value;
+  const tel    = document.getElementById('regTel').value.trim();
+  const ville  = document.getElementById('regVille').value;
+  const errEl  = document.getElementById('registerError');
+  errEl.classList.remove('show');
+  if(!prenom||!nom||!email||!pwd) { errEl.textContent='Remplissez tous les champs obligatoires (*).'; errEl.classList.add('show'); return; }
+  try {
+    const res  = await fetch('/api/auth/register', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prenom, nom, email, mot_de_passe: pwd, telephone: tel, ville, role: selectedRegRole})});
+    const data = await res.json();
+    if(!res.ok) { errEl.textContent = data.error || 'Erreur inscription'; errEl.classList.add('show'); return; }
+    currentUser = data.user;
+    showToast('🎉 Compte créé! Bienvenue ' + prenom + '!');
+    afterLogin();
+  } catch(e) { errEl.textContent='Erreur réseau.'; errEl.classList.add('show'); }
+}
+
+function initSocket() {
+  if(socket) return;
+  socket = io();
+  socket.on('connect', () => {
+    if(currentUser) socket.emit('register_user', {user_id: currentUser.id});
+  });
+
+  // Incoming DM — show if chat is open with that person, else show badge
+  socket.on('new_dm', msg => {
+    const fromMe = msg.expediteur_id === currentUser.id;
+    if(fromMe) return; // already shown optimistically
+    if(msg.expediteur_id === currentPartnerId) {
+      appendDM(msg, false);
+    } else {
+      // Update unread badge in convo list
+      const el = document.getElementById('convo_'+msg.expediteur_id);
+      if(el) {
+        let badge = el.querySelector('.chat-unread');
+        if(!badge) { badge = document.createElement('div'); badge.className='chat-unread'; el.querySelector('div:last-child').appendChild(badge); }
+        badge.textContent = parseInt(badge.textContent||0)+1;
+      } else {
+        // New conversation — reload list
+        loadMsgs();
+      }
+      showToast('💬 ' + msg.expediteur_nom + ': ' + msg.contenu.slice(0,40));
+    }
+  });
+
+  // Typing indicator
+  socket.on('user_typing', data => {
+    const ind = document.getElementById('typingIndicator');
+    if(!ind) return;
+    if(data.user_id === currentPartnerId) {
+      ind.style.display = data.typing ? '' : 'none';
+    }
+  });
+
+  // Online/offline status updates
+  socket.on('online_status', data => {
+    if(data.user_id === currentPartnerId) {
+      const st = document.getElementById('chatHeaderStatus');
+      if(st) st.textContent = data.online ? '🟢 En ligne' : '⚫ Hors ligne';
+    }
+  });
+}
+
+function afterLogin() {
+  document.getElementById('screenSwitcher').classList.add('show');
+  updateSidebars();
+  initSocket();
+  if(currentUser.role==='ingenieur') {
+    document.getElementById('engSwitchBtn').style.display='';
+    showScreen('engineer');
+  } else {
+    showScreen('client');
+  }
+  showToast('Bienvenue ' + currentUser.prenom + '! 👋');
+}
+
+function updateSidebars() {
+  if(!currentUser) return;
+  const initials = ((currentUser.prenom||'')[0]||'') + ((currentUser.nom||'')[0]||'');
+  ['cAvatar','sAvatar','chAvatar','pAvatar','eAvatar'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=initials.toUpperCase();});
+  ['cName','sName','chName','pName','eName'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=currentUser.prenom+' '+currentUser.nom;});
+  if(document.getElementById('cardHolder')) document.getElementById('cardHolder').textContent=currentUser.prenom.toUpperCase()+' '+currentUser.nom.toUpperCase();
+  if(document.getElementById('cGreet')) document.getElementById('cGreet').textContent='Bonjour, '+currentUser.prenom+' 👋';
+}
+
+async function doLogout() {
+  await fetch('/api/auth/logout',{method:'POST'});
+  currentUser=null;
+  if(socket){socket.disconnect();socket=null;}
+  document.getElementById('screenSwitcher').classList.remove('show');
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='';});
+  document.getElementById('screen-landing').classList.add('active');
+}
+
+// ═══════════════════ CLIENT DASHBOARD ═══════════════════
+async function loadClientDash() {
+  if(!currentUser) return;
+  // Load projects
+  const r = await fetch('/api/projets').catch(()=>null);
+  if(!r||!r.ok) return;
+  const proj = await r.json();
+  const actifs = proj.filter(p=>p.statut==='en_cours');
+  const revs = proj.filter(p=>p.statut==='en_revision');
+  const clots = proj.filter(p=>p.statut==='cloture');
+  const budgetTotal = proj.reduce((s,p)=>s+(p.budget_estime||0),0);
+  if(document.getElementById('stActif')) document.getElementById('stActif').textContent = actifs.length;
+  if(document.getElementById('stRev')) document.getElementById('stRev').textContent = revs.length;
+  if(document.getElementById('stBudget')) document.getElementById('stBudget').textContent = budgetTotal.toLocaleString('fr') + ' DT';
+  if(document.getElementById('stDone')) document.getElementById('stDone').textContent = clots.length;
+
+  // Render project cards
+  const grid = document.getElementById('cProjets');
+  if(!grid) return;
+  grid.innerHTML = '';
+  if(proj.length===0) {
+    grid.innerHTML='<div style="grid-column:1/-1;padding:32px;text-align:center;color:var(--muted);font-size:14px;">Aucun projet. <a style="color:var(--blue4);cursor:pointer" onclick="openModal()">Créez votre premier projet →</a></div>';
+  } else {
+    proj.slice(0,3).forEach((p,i) => {
+      const img = PROJ_IMAGES[i % PROJ_IMAGES.length];
+      const statClass = 'st-'+(p.statut||'en_attente');
+      const statLbl = {en_cours:'En cours',en_revision:'En révision',cloture:'Livré',en_attente:'En attente'}[p.statut] || p.statut;
+      const engNom = p.ingenieur ? (p.ingenieur.prenom+' '+p.ingenieur.nom) : '–';
+      const engInit = p.ingenieur ? ((p.ingenieur.prenom||'')[0]+(p.ingenieur.nom||'')[0]).toUpperCase() : '?';
+      grid.innerHTML += `
+        <div class="proj-card" onclick="currentProjectId=${p.id};showScreen('chat')">
+          <div class="proj-img">
+            <img src="${img}" alt="${p.titre}" loading="lazy">
+            <div class="proj-img-overlay"></div>
+            <div class="proj-img-badge">${p.reference||'PRJ'}</div>
+            <div class="proj-img-style">${p.conception?.style||''} ${p.conception?.style_emoji||'🏠'}</div>
+          </div>
+          <div class="proj-body">
+            <div class="proj-name">${p.titre}</div>
+            <div class="proj-meta">
+              <span>📍 ${p.ville||'–'}</span>
+              <span>📐 ${p.superficie||'–'} m²</span>
+              <span>💰 ${(p.budget_estime||0).toLocaleString('fr')} DT</span>
+            </div>
+            <div class="prog-row"><span>Progression</span><span>${p.progression}%</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:${p.progression}%"></div></div>
+            <div class="proj-footer">
+              <span class="proj-status ${statClass}">● ${statLbl}</span>
+              <div class="proj-eng"><div class="proj-eng-av" style="background:${AVATAR_COLORS[i%3]}">${engInit}</div><span class="proj-eng-name">${engNom}</span></div>
+            </div>
+          </div>
+        </div>`;
+    });
+  }
+
+  // Load engineers
+  loadEngCards();
+}
+
+async function loadEngCards() {
+  const r = await fetch('/api/conceptions?per_page=3').catch(()=>null);
+  if(!r||!r.ok) return;
+  const data = await r.json();
+  const engSeen = {};
+  const engineers = [];
+  (data.items||[]).forEach(c=>{if(c.ingenieur&&!engSeen[c.ingenieur.id]){engSeen[c.ingenieur.id]=true;engineers.push(c.ingenieur);}});
+  allEngineers = engineers;
+
+  const grid = document.getElementById('cEngineers');
+  if(!grid) return;
+  grid.innerHTML = '';
+  engineers.slice(0,3).forEach((eng,i) => {
+    const specs = Array.isArray(eng.specialites) ? eng.specialites : [];
+    const stars = '⭐'.repeat(Math.round(eng.note_moyenne||4));
+    grid.innerHTML += `
+      <div class="eng-big-card">
+        <div class="eng-banner">
+          <img src="${ENG_BANNERS[i%ENG_BANNERS.length]}" alt="banner" loading="lazy">
+          <div class="eng-banner-overlay"></div>
+        </div>
+        <div class="eng-card-body">
+          <div class="eng-av-wrap">
+            <div class="eng-av-big" style="background:${AVATAR_COLORS[i%3]};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:white">
+              ${((eng.prenom||'')[0]||'')+(eng.nom||'')[0]||'?'}
+            </div>
+            <div class="eng-avail ${eng.disponible?'yes':'no'}">${eng.disponible?'Disponible':'Occupé'}</div>
+          </div>
+          <div class="eng-full-name">${eng.prenom} ${eng.nom}</div>
+          <div class="eng-speciality">Architecte • ${eng.ville||'Tunis'}</div>
+          <div class="eng-stats-row">
+            <div class="eng-stat"><div class="eng-stat-val">${eng.nb_projets_termines||0}</div><div class="eng-stat-lbl">Projets</div></div>
+            <div class="eng-sep"></div>
+            <div class="eng-stat"><div class="eng-stat-val">${eng.experience_ans||0}</div><div class="eng-stat-lbl">Années</div></div>
+            <div class="eng-sep"></div>
+            <div class="eng-stat"><div class="eng-stat-val" style="color:var(--gold)">${(eng.note_moyenne||0).toFixed(1)}</div><div class="eng-stat-lbl">Note</div></div>
+          </div>
+          <div class="eng-tags">${specs.slice(0,3).map(s=>`<span class="eng-tag">${s}</span>`).join('')}</div>
+          <div class="eng-tarif">Tarif: <b>${eng.tarif_horaire||0} DT/h</b></div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="showScreen('styles')">Voir ses conceptions →</button>
+        </div>
+      </div>`;
+  });
+}
+
+// ═══════════════════ STYLES / CONCEPTIONS ═══════════════════
+async function loadConceptions(style) {
+  const url = '/api/conceptions' + (style&&style!=='tous' ? '?style='+encodeURIComponent(style) : '');
+  const r = await fetch(url).catch(()=>null);
+  if(!r||!r.ok) return;
+  const data = await r.json();
+  allConceptions = data.items || data;
+  renderConceptions(allConceptions);
+}
+
+function renderConceptions(list) {
+  const grid = document.getElementById('stylesGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  if(!list||!list.length) {
+    grid.innerHTML='<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--muted)">Aucune conception pour ce style.</div>';
+    return;
+  }
+  list.forEach(c => {
+    const img = ARCH_IMAGES[c.style] || ARCH_IMAGES['Moderne'];
+    const tags = (c.caracteristiques||[]).slice(0,3);
+    const engNom = c.ingenieur ? c.ingenieur.prenom+' '+c.ingenieur.nom : '–';
+    const engInit = c.ingenieur ? ((c.ingenieur.prenom||'')[0]+(c.ingenieur.nom||'')[0]).toUpperCase() : '?';
+    const isPopular = c.nb_vues > 150;
+    grid.innerHTML += `
+      <div class="style-card">
+        <div class="style-img">
+          <img src="${img}" alt="${c.titre}" loading="lazy">
+          <div class="style-img-overlay"></div>
+          ${isPopular?'<div class="style-badge-img">⭐ Populaire</div>':''}
+          <div class="style-emoji-overlay">${c.style_emoji||'🏠'}</div>
+        </div>
+        <div class="style-info">
+          <div class="style-name">${c.titre}</div>
+          <div class="style-desc">${c.description}</div>
+          <div class="style-tags">${tags.map(t=>`<span class="style-tag">${t}</span>`).join('')}</div>
+          <div style="display:flex;gap:16px;font-size:12px;color:var(--muted);margin-bottom:12px;">
+            <span>🛏 ${c.nb_chambres} ch.</span>
+            <span>📐 ${c.superficie_min}–${c.superficie_max} m²</span>
+            <span>👁 ${c.nb_vues}</span>
+            <span>❤️ ${c.nb_likes}</span>
+          </div>
+          <div class="style-eng-mini">
+            <div style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1e40af,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${engInit}</div>
+            <div><div class="style-eng-name">${engNom}</div><div class="style-eng-info">${c.ingenieur?.experience_ans||0} ans · ⭐ ${(c.ingenieur?.note_moyenne||0).toFixed(1)}</div></div>
+            <div style="margin-left:auto">
+              <div class="style-price">${(c.prix_base||0).toLocaleString('fr')} DT</div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;margin-top:12px" onclick="selectConception(${c.id},'${c.titre.replace(/'/g,"\\'")}','${c.style_emoji||'🏠'}',${c.prix_base},${c.ingenieur?.id||0})">
+            Choisir ce style →
+          </button>
+        </div>
+      </div>`;
+  });
+}
+
+function filterStyles(chip, style) {
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  loadConceptions(style);
+}
+
+async function selectConception(id, titre, emoji, prix, engId) {
+  if(!currentUser) { showToast('Connectez-vous d\'abord.', true); return; }
+  if(currentUser.role==='ingenieur') { showToast('Les ingénieurs ne créent pas de projets client.', true); return; }
+  document.getElementById('sumEmoji').textContent = emoji;
+  document.getElementById('sumTitle').textContent = titre;
+  document.getElementById('sumMeta').textContent = 'Style architectural • Conception sur mesure';
+  document.getElementById('priceBase').textContent = (prix||0).toLocaleString('fr')+' DT';
+  const total = (prix||0)+200+150-50;
+  document.getElementById('priceTotal').textContent = total.toLocaleString('fr')+' DT';
+  document.getElementById('payAmt').textContent = total.toLocaleString('fr')+' DT';
+  showScreen('payment');
+}
+
+// ═══════════════════ CHAT / DM SYSTEM ═══════════════════
+let currentPartnerId = null;
+let allConvos = [];
+let typingTimer = null;
+let dmUserMap = {}; // id -> user object, to avoid onclick string escaping issues
+
+async function loadMsgs() {
+  const r = await fetch('/api/dm/conversations').catch(()=>null);
+  if(r && r.ok) {
+    allConvos = await r.json();
+    renderConvoList(allConvos);
+  }
+  document.getElementById('chatEmpty').style.display = 'flex';
+  document.getElementById('chatWindow').style.display = 'none';
+}
+
+function renderConvoList(convos) {
+  const threads = document.getElementById('chatThreads');
+  if(!threads) return;
+  threads.innerHTML = '';
+  if(!convos.length) {
+    threads.innerHTML = '<div style="padding:24px 16px;color:var(--muted);font-size:13px;text-align:center;">Aucune conversation.<br>Cliquez <b style="color:var(--blue4)">+ Nouveau</b> pour commencer.</div>';
+    return;
+  }
+  convos.forEach((c,i) => {
+    // Store in map so onclick just uses id
+    dmUserMap[c.partner_id] = {id:c.partner_id, prenom:c.partner_nom.split(' ')[0], nom:c.partner_nom.split(' ').slice(1).join(' '), initiales:c.partner_initiales, online:c.online, role:c.partner_role};
+    const unread = c.unread || 0;
+    const el = document.createElement('div');
+    el.className = 'chat-item' + (currentPartnerId===c.partner_id?' active':'');
+    el.id = 'convo_'+c.partner_id;
+    el.innerHTML = `
+      <div class="chat-av" style="background:${AVATAR_COLORS[i%3]};position:relative">
+        ${c.partner_initiales}
+        ${c.online?'<span style="position:absolute;bottom:1px;right:1px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid var(--navy2)"></span>':''}
+      </div>
+      <div class="chat-info" style="flex:1;min-width:0">
+        <div class="chat-cname">${c.partner_nom} <span style="font-size:10px;color:var(--muted);font-weight:400">${c.partner_role}</span></div>
+        <div class="chat-prev">${c.last_message || 'Démarrer la conversation'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        <div class="chat-tm">${c.last_date || ''}</div>
+        ${unread ? `<div class="chat-unread">${unread}</div>` : ''}
+      </div>`;
+    el.onclick = () => openDM(c.partner_id);
+    threads.appendChild(el);
+  });
+}
+
+function filterConvos(q) {
+  const filtered = allConvos.filter(c => c.partner_nom.toLowerCase().includes(q.toLowerCase()));
+  renderConvoList(filtered);
+}
+
+function toggleUserSearch() {
+  const panel = document.getElementById('userSearchPanel');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : '';
+  if(!isOpen) {
+    document.getElementById('userSearchInput').value = '';
+    document.getElementById('userSearchInput').focus();
+    searchUsers('');
+  }
+}
+
+async function searchUsers(q) {
+  const r = await fetch('/api/users').catch(()=>null);
+  if(!r||!r.ok) { console.error('Cannot fetch /api/users'); return; }
+  const users = await r.json();
+  const filtered = users.filter(u =>
+    (u.prenom+' '+u.nom).toLowerCase().includes(q.toLowerCase()) ||
+    (u.email||'').toLowerCase().includes(q.toLowerCase())
+  );
+  const results = document.getElementById('userSearchResults');
+  results.innerHTML = '';
+  if(!filtered.length) {
+    results.innerHTML='<div style="color:var(--muted);font-size:12px;padding:6px">Aucun utilisateur trouvé.</div>';
+    return;
+  }
+  filtered.forEach((u,i) => {
+    dmUserMap[u.id] = u; // store for later
+    const init = u.initiales || ((u.prenom||'')[0]+(u.nom||'')[0]).toUpperCase();
+    const el = document.createElement('div');
+    el.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;transition:background .15s';
+    el.innerHTML = `
+      <div style="width:36px;height:36px;border-radius:50%;background:${AVATAR_COLORS[i%3]};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;position:relative">
+        ${init}
+        ${u.online?'<span style="position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--navy2)"></span>':''}
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600">${u.prenom} ${u.nom}</div>
+        <div style="font-size:11px;color:var(--muted)">${u.role}${u.online?' · 🟢 En ligne':''}</div>
+      </div>`;
+    el.onmouseover = () => el.style.background = 'rgba(37,99,235,.12)';
+    el.onmouseout  = () => el.style.background = '';
+    el.onclick = () => { openDM(u.id); toggleUserSearch(); };
+    results.appendChild(el);
+  });
+}
+
+async function openDM(partnerId) {
+  currentPartnerId = partnerId;
+  const u = dmUserMap[partnerId];
+  const nom     = u ? (u.prenom+' '+u.nom) : '...';
+  const init    = u ? (u.initiales || ((u.prenom||'?')[0]+(u.nom||'?')[0]).toUpperCase()) : '?';
+  const online  = u ? !!u.online : false;
+
+  // Update header
+  document.getElementById('chatHeaderAv').textContent     = init;
+  document.getElementById('chatHeaderName').textContent   = nom;
+  document.getElementById('chatHeaderStatus').textContent = online ? '🟢 En ligne' : '⚫ Hors ligne';
+
+  // Show chat window
+  document.getElementById('chatEmpty').style.display  = 'none';
+  document.getElementById('chatWindow').style.display = 'flex';
+
+  // Mark active in list
+  document.querySelectorAll('.chat-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('convo_'+partnerId);
+  if(el) el.classList.add('active');
+
+  // Load history from DB (marks as read server-side)
+  const r = await fetch(`/api/dm/${partnerId}`).catch(()=>null);
+  const msgs = (r && r.ok) ? await r.json() : [];
+  const container = document.getElementById('chatMsgs');
+  container.innerHTML = '';
+  msgs.forEach(m => appendDM(m, m.expediteur_id === currentUser.id));
+  container.scrollTop = container.scrollHeight;
+
+  // Join socket DM room
+  if(socket) socket.emit('join_dm', {partner_id: partnerId});
+
+  // Remove unread badge
+  if(el) { const badge = el.querySelector('.chat-unread'); if(badge) badge.remove(); }
+}
+
+function appendDM(m, isSent) {
+  const container = document.getElementById('chatMsgs');
+  if(!container) return;
+  const init = m.expediteur_initiales || (isSent ? ((currentUser.prenom||'?')[0]+(currentUser.nom||'?')[0]).toUpperCase() : '?');
+  const div = document.createElement('div');
+  div.className = 'msg' + (isSent ? ' sent' : '');
+  div.innerHTML = `
+    <div class="msg-av" style="background:linear-gradient(135deg,${isSent?'#1e40af,#06b6d4':'#7c3aed,#2563eb'})">${init}</div>
+    <div>
+      <div class="msg-bubble">${escapeHtml(m.contenu)}</div>
+      <div class="msg-time" style="${isSent?'text-align:right':''}">${m.date||'maintenant'}</div>
+    </div>`;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+async function sendMsg() {
+  const input = document.getElementById('chatInput');
+  const val = input.value.trim();
+  if(!val || !currentUser || !currentPartnerId) return;
+  input.value = '';
+  appendDM({
+    contenu: val,
+    expediteur_id: currentUser.id,
+    expediteur_initiales: ((currentUser.prenom||'?')[0]+(currentUser.nom||'?')[0]).toUpperCase(),
+    date: 'maintenant'
+  }, true);
+  if(socket && socket.connected) {
+    socket.emit('send_dm', {partner_id: currentPartnerId, contenu: val});
+  } else {
+    await fetch(`/api/dm/${currentPartnerId}`, {method:'POST',
+      headers:{'Content-Type':'application/json'}, body:JSON.stringify({contenu:val})}).catch(()=>null);
+  }
+}
+
+function sendTyping() {
+  if(!socket || !currentPartnerId) return;
+  socket.emit('typing', {partner_id: currentPartnerId, typing: true});
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => socket.emit('typing', {partner_id: currentPartnerId, typing: false}), 1500);
+}
+
+// ═══════════════════ PAYMENT ═══════════════════
+async function doPayment() {
+  if(!currentUser) return;
+  const pid = currentProjectId || 1;
+  const total = parseInt(document.getElementById('payAmt').textContent.replace(/\s/g,'')) || 1200;
+  const r = await fetch(`/api/projets/${pid}/paiements`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({montant:total,type:'initial'})}).catch(()=>null);
+  if(r&&r.ok) {
+    showToast('✅ Paiement Escrow effectué! Fonds gelés jusqu\'à approbation.');
+    showScreen('client');
+  } else {
+    showToast('Erreur lors du paiement.', true);
+  }
+}
+
+// ═══════════════════ ENGINEER DASHBOARD ═══════════════════
+async function loadEngDash() {
+  if(!currentUser) return;
+  document.getElementById('eName').textContent = currentUser.prenom+' '+currentUser.nom;
+  const init = ((currentUser.prenom||'')[0]+(currentUser.nom||'')[0]).toUpperCase();
+  document.getElementById('eAvatar').textContent = init;
+
+  const r = await fetch('/api/projets').catch(()=>null);
+  if(!r||!r.ok) return;
+  const projets = await r.json();
+  const actifs = projets.filter(p=>p.statut==='en_cours').length;
+  document.getElementById('eActive').textContent = actifs;
+
+  const tbody = document.getElementById('engTableBody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  projets.forEach((p,i) => {
+    const cNom = p.client ? (p.client.prenom+' '+p.client.nom) : '–';
+    const cInit = p.client ? ((p.client.prenom||'')[0]+(p.client.nom||'')[0]).toUpperCase() : '?';
+    const stCl = {en_cours:'st-en_cours',en_revision:'st-en_revision',cloture:'st-cloture',en_attente:'st-en_attente'}[p.statut]||'st-en_attente';
+    const stLbl = {en_cours:'En cours',en_revision:'En révision',cloture:'Livré',en_attente:'En attente'}[p.statut]||p.statut;
+    tbody.innerHTML += `
+      <div class="table-row">
+        <div class="cl-info">
+          <div class="cl-av" style="background:${AVATAR_COLORS[i%3]}">${cInit}</div>
+          <div><div class="cl-name">${cNom}</div><div class="cl-sub">${p.ville||'–'} • ${p.superficie||0} m²</div></div>
+        </div>
+        <div><div style="font-weight:500">${p.titre}</div><div style="font-size:11px;color:var(--muted)">${p.reference||''}</div></div>
+        <div style="font-weight:600;color:var(--sky)">${(p.budget_estime||0).toLocaleString('fr')} DT</div>
+        <div style="color:var(--muted)">${p.date_debut||'–'}</div>
+        <div><span class="proj-status ${stCl}">● ${stLbl}</span></div>
+        <div><button class="btn btn-ghost btn-sm" onclick="currentProjectId=${p.id};showScreen('chat')">💬 Chat</button></div>
+      </div>`;
+  });
+  if(projets.length===0) tbody.innerHTML='<div style="padding:24px;color:var(--muted);text-align:center;font-size:14px">Aucune demande pour le moment.</div>';
+}
+
+// ═══════════════════ MODAL: ADD PROJECT ═══════════════════
+function openModal() {
+  if(!currentUser) { showToast('Connectez-vous d\'abord!', true); return; }
+  if(currentUser.role==='ingenieur') { showToast('Section réservée aux clients.', true); return; }
+  document.getElementById('modalAddProj').classList.add('open');
+  modalNext(1);
+  // Load styles into select
+  fetch('/api/styles').then(r=>r.json()).then(styles=>{
+    const sel = document.getElementById('pStyle');
+    if(sel) {
+      styles.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.emoji+' '+s.nom;
+        sel.appendChild(opt);
+      });
+    }
+    // Style pick grid
+    const pickGrid = document.getElementById('stylePickGrid');
+    if(pickGrid) {
+      pickGrid.innerHTML = '';
+      styles.slice(0,6).forEach(s=>{
+        const img = ARCH_IMAGES[s.nom] || ARCH_IMAGES['Moderne'];
+        pickGrid.innerHTML += `
+          <div onclick="this.parentNode.querySelectorAll('.spick').forEach(x=>x.classList.remove('active'));this.classList.add('active');document.getElementById('pStyle').value=${s.id}"
+            class="spick" style="border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid var(--border);transition:border-color .2s;aspect-ratio:16/10;position:relative;">
+            <img src="${img}" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(4,13,36,.8),transparent)"></div>
+            <div style="position:absolute;bottom:6px;left:8px;font-size:11px;font-weight:700">${s.emoji} ${s.nom}</div>
+          </div>`;
+      });
+    }
+  }).catch(()=>{});
+  // Load engineers
+  fetch('/api/conceptions?per_page=20').then(r=>r.json()).then(data=>{
+    const sel = document.getElementById('pEng');
+    if(!sel) return;
+    const seen = {};
+    (data.items||[]).forEach(c=>{
+      if(c.ingenieur&&!seen[c.ingenieur.id]){
+        seen[c.ingenieur.id]=true;
+        const opt=document.createElement('option');
+        opt.value=c.ingenieur.id;
+        opt.textContent=c.ingenieur.prenom+' '+c.ingenieur.nom+' ('+c.ingenieur.experience_ans+' ans)';
+        sel.appendChild(opt);
+      }
+    });
+  }).catch(()=>{});
+}
+
+function closeModal() {
+  document.getElementById('modalAddProj').classList.remove('open');
+}
+
+function modalNext(step) {
+  currentModalStep = step;
+  [1,2,3].forEach(s=>{
+    document.getElementById('modalStep'+s).style.display = s===step ? '' : 'none';
+  });
+  document.querySelectorAll('.modal-step').forEach((el,i)=>{
+    const n = i+1;
+    el.classList.remove('active','done');
+    if(n===step) el.classList.add('active');
+    else if(n<step) el.classList.add('done');
+  });
+  if(step===3) recalcBudget();
+}
+
+function recalcBudget() {
+  const base = parseFloat(document.getElementById('pBudget').value)||0;
+  const extra = (document.getElementById('opt3d').checked?150:0);
+  document.getElementById('budgetTotal').textContent = (base+extra).toLocaleString('fr')+' DT';
+}
+document.addEventListener('change', e=>{if(['opt3d','optPisc','optJar','optDomo','optEco'].includes(e.target.id)) recalcBudget();});
+document.addEventListener('input', e=>{if(e.target.id==='pBudget') recalcBudget();});
+
+async function submitProject() {
+  if(!currentUser) return;
+  const titre = document.getElementById('pTitle').value.trim();
+  const ville = document.getElementById('pVille').value;
+  const superficie = parseFloat(document.getElementById('pSuper').value)||0;
+  if(!titre||!ville||!superficie) { showToast('Remplissez les champs obligatoires (*).',true); modalNext(1); return; }
+
+  const body = {
+    titre, ville, superficie,
+    adresse: document.getElementById('pAddr').value,
+    description: document.getElementById('pDesc').value,
+    priorite: document.getElementById('pPrio').value,
+    budget_estime: parseFloat(document.getElementById('pBudget').value)||0,
+    notes_client: document.getElementById('pNotes').value,
+    conception_id: parseInt(document.getElementById('pStyle').value)||null,
+    ingenieur_id: parseInt(document.getElementById('pEng').value)||null,
+  };
+
+  const r = await fetch('/api/projets',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(()=>null);
+  if(r&&r.ok) {
+    closeModal();
+    showToast('🎉 Projet "'+titre+'" créé avec succès!');
+    showScreen('client');
+  } else {
+    const err = r ? await r.json() : {};
+    showToast(err.error||'Erreur création projet.',true);
+  }
+}
+
+// Close modal on backdrop click
+document.getElementById('modalAddProj').addEventListener('click', e=>{if(e.target===e.currentTarget) closeModal();});
+
+// ═══════════════════ INIT ═══════════════════
+fetch('/api/auth/me').then(r=>{if(r.ok)return r.json();}).then(u=>{if(u){currentUser=u;afterLogin();}}).catch(()=>{});
+</script>
+</body>
+</html>
